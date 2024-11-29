@@ -1,0 +1,35 @@
+# Build directories
+bin/
+obj/
+
+# IDE-specific files
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.rsuser
+
+# Logs
+*.log
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+
+# Dependency folders
+node_modules/
+bower_components/
+
+# Publish output
+wwwroot/service-worker.js
+wwwroot/service-worker-assets.js
+
+# Temporary files
+*.tmp
+*.pidb
+
+# Generated files
+wwwroot/css/app.css
+wwwroot/css/app.css.map
+wwwroot/js/*.min.js

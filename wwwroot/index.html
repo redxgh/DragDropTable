@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DragDropTable</title>
+    <base href="/" />
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link href="DragDropTable.styles.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div id="app">
+        <svg class="loading-progress">
+            <circle r="40%" cx="50%" cy="50%" />
+            <circle r="40%" cx="50%" cy="50%" />
+        </svg>
+        <div class="loading-progress-text"></div>
+    </div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="." class="reload">Reload</a>
+        <span class="dismiss">🗙</span>
+    </div>
+    <script src="_framework/blazor.webassembly.js"></script>
+    <script>
+        let draggedColumn = null;
+
+        function initializeDragAndDrop(tableId, dotNetHelper) {
+            const table = document.getElementById(tableId);
+            const headers = table.querySelectorAll("th");
+
+            headers.forEach(header => {
+                header.draggable = true;
+
+                header.addEventListener("dragstart", (e) => {
+                    draggedColumn = e.target;
+                    e.target.classList.add("dragging");
+                });
+
+                header.addEventListener("dragend", (e) => {
+                    e.target.classList.remove("dragging");
+                });
+
+                header.addEventListener("dragover", (e) => {
+                    e.preventDefault();
+                    const draggingOver = e.target;
+                    draggingOver.classList.add("drag-over");
+                });
+
+                header.addEventListener("dragleave", (e) => {
+                    e.target.classList.remove("drag-over");
+                });
+
+                header.addEventListener("drop", (e) => {
+                    e.preventDefault();
+                    const target = e.target;
+
+                    // Remove visual cues
+                    headers.forEach(h => h.classList.remove("drag-over"));
+
+                    // Swap columns
+                    if (draggedColumn !== target) {
+                        const draggedColumnIndex = Array.from(headers).indexOf(draggedColumn);
+                        const targetColumnIndex = Array.from(headers).indexOf(target);
+
+                        dotNetHelper.invokeMethodAsync("ReorderColumns", draggedColumnIndex, targetColumnIndex);
+                    }
+                });
+            });
+        }
+    </script>
+
+</body>
+
+</html>

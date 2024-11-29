@@ -1,0 +1,73 @@
+﻿@page "/table"
+
+<PageTitle>
+    Reorder Table
+</PageTitle>
+
+@inject IJSRuntime JSRuntime
+
+<table id="myTable" class="table table-striped table-hover">
+    <thead>
+        <tr>
+            @foreach (var column in ColumnOrder)
+            {
+                <th>@column</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var row in GetMockData())
+        {
+            <tr>
+                @foreach (var column in ColumnOrder)
+                {
+                    <td>@row[column]</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<string> ColumnOrder = new() { "Name", "Age", "Country" };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("initializeDragAndDrop", "myTable", DotNetObjectReference.Create(this));
+        }
+    }
+
+    [JSInvokable]
+    public void ReorderColumns(int fromIndex, int toIndex)
+    {
+        // Update column order in C#
+        if (fromIndex < 0 || toIndex < 0 || fromIndex == toIndex) return;
+
+        var movedColumn = ColumnOrder[fromIndex];
+        ColumnOrder.RemoveAt(fromIndex);
+        ColumnOrder.Insert(toIndex, movedColumn);
+
+        StateHasChanged(); // Re-render the table
+    }
+
+    private List<Dictionary<string, object>> GetMockData()
+    {
+        return new()
+        {
+            new() { { "Name", "Alice" }, { "Age", 25 }, { "Country", "USA" } },
+            new() { { "Name", "Bob" }, { "Age", 30 }, { "Country", "UK" } },
+            new() { { "Name", "Alice" }, { "Age", 25 }, { "Country", "USA" } },
+            new() { { "Name", "Bob" }, { "Age", 30 }, { "Country", "UK" } },
+            new() { { "Name", "Alice" }, { "Age", 25 }, { "Country", "USA" } },
+            new() { { "Name", "Bob" }, { "Age", 30 }, { "Country", "UK" } },
+            new() { { "Name", "Alice" }, { "Age", 25 }, { "Country", "USA" } },
+            new() { { "Name", "Bob" }, { "Age", 30 }, { "Country", "UK" } },
+            new() { { "Name", "Alice" }, { "Age", 25 }, { "Country", "USA" } },
+            new() { { "Name", "Bob" }, { "Age", 30 }, { "Country", "UK" } },
+            new() { { "Name", "Alice" }, { "Age", 25 }, { "Country", "USA" } },
+            new() { { "Name", "Bob" }, { "Age", 30 }, { "Country", "UK" } }
+        };
+    }
+}

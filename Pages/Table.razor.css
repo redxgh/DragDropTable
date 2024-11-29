@@ -1,0 +1,8 @@
+﻿.dragging {
+    opacity: 0.5;
+}
+
+.drag-over {
+    border: 2px dashed #007bff;
+    background-color: #f0f8ff;
+}
